@@ -60,7 +60,7 @@ class Checklist(TrelloBase):
         for name in [item['name'] for item in self.items]:
             self.delete_checklist_item(name)
 
-    def set_checklist_item(self, name, checked):
+    def set_checklist_item(self, name, checked, pos=None):
         """Set the state of an item on this checklist
 
         :name: name of the checklist item
@@ -70,12 +70,16 @@ class Checklist(TrelloBase):
         if ix is None:
             return
 
+        data = {'state': 'complete' if checked else 'incomplete'}
+        if pos is not None:
+            data['pos'] = pos
+
         json_obj = self.client.fetch_json(
             '/cards/' + self.trello_card +
             '/checklist/' + self.id +
             '/checkItem/' + self.items[ix]['id'],
             http_method='PUT',
-            post_args={'state': 'complete' if checked else 'incomplete'})
+            post_args=data)
 
         json_obj['checked'] = checked
         self.items[ix] = json_obj
