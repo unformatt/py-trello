@@ -23,17 +23,21 @@ class Checklist(TrelloBase):
                 if cis['idCheckItem'] == i['id'] and cis['state'] == 'complete':
                     i['checked'] = True
 
-    def add_checklist_item(self, name, checked=False):
+    def add_checklist_item(self, name, checked=False, pos=None):
         """Add a checklist item to this checklist
 
         :name: name of the checklist item
         :checked: True if item state should be checked, False otherwise
         :return: the checklist item json object
         """
+        data = {'name': name, 'checked': checked}
+        if pos is not None:
+            data['pos'] = pos
+
         json_obj = self.client.fetch_json(
             '/checklists/' + self.id + '/checkItems',
             http_method='POST',
-            post_args={'name': name, 'checked': checked}, )
+            post_args=data)
         json_obj['checked'] = checked
         self.items.append(json_obj)
         return json_obj
