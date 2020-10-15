@@ -171,12 +171,12 @@ class Board(TrelloBase):
 		"""
 		return self.get_lists(list_filter=list_filter)
 
-	def get_custom_field_definitions(self):
+	def get_custom_field_definitions(self, refetch=False):
 		"""Get all custom field definitions for this board
 
 		:rtype: list of CustomFieldDefinition
 		"""
-		if self.customFieldDefinitions is None:
+		if refetch or self.customFieldDefinitions is None:
 			json_obj = self.client.fetch_json('/boards/' + self.id + '/customFields')
 			self.customFieldDefinitions = CustomFieldDefinition.from_json_list(self, json_obj)
 		return self.customFieldDefinitions
