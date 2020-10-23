@@ -253,6 +253,10 @@ class TrelloClient(object):
                                                  auth=self.oauth, files=files,
                                                  proxies=self.proxies)
 
+            # print("response.status_code:", uri_path, response.status_code, ' ->', time.time() - t1, 'secs')
+            # for header, val in response.headers.items():
+            #     if header.startswith('X-RATE'):
+            #         print('{}: {}'.format(header, val))
             if response.status_code == 401:
                 raise Unauthorized("%s at %s" % (response.text, url), response)
             elif response.status_code == 429 and retries < max_retries:
@@ -310,6 +314,9 @@ class TrelloClient(object):
                 stats[prop] = int(self._last_response.headers.get('X-RATE-LIMIT-%s' % prop, default))
 
         return stats
+
+    def delete_hook(self, hook_id):
+        self.fetch_json('/webhooks/{}'.format(hook_id), http_method='DELETE')
 
     def list_hooks(self, token=None):
         """
