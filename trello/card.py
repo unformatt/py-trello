@@ -145,6 +145,7 @@ class Card(TrelloBase):
         card._json_obj = json_obj
         card.desc = json_obj.get('desc', '')
         card.due = json_obj.get('due', '')
+        card.start = json_obj.get('start', '')
         card.is_due_complete = json_obj['dueComplete']
         card.closed = json_obj['closed']
         card.url = json_obj['url']
@@ -198,6 +199,8 @@ class Card(TrelloBase):
             self.due = json_obj.get('due', '')
         else:
             self.due = ''
+
+        self.start = json_obj.get('start', '')
         self.checked = json_obj['checkItemStates']
         self.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
 
@@ -506,6 +509,10 @@ class Card(TrelloBase):
     @property
     def due_date(self):
         return dateparser.parse(self.due) if self.due else ''
+
+    @property
+    def start_date(self):
+        return dateparser.parse(self.start) if self.start else ''
 
     def set_name(self, new_name):
         """Update the name on the card to :new_name:
