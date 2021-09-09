@@ -470,3 +470,6 @@ class Board(TrelloBase):
                 '/boards/{0}/dateLastActivity'.format(self.id))
 		if json_obj['_value']:
 			return dateparser.parse(json_obj['_value'])
+
+	def download_attachment(self, url):
+		return self.client.http_service.get(url, auth=self.client.oauth)
