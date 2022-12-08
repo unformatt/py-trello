@@ -329,6 +329,8 @@ class Board(TrelloBase):
 
 		:rtype: list of Card
 		"""
+		filters = filters or {}
+		filters['fields'] = 'all'
 		json_obj = self.client.fetch_json(
 				'/boards/' + self.id + '/cards/' + card_filter,
 				query_params=filters

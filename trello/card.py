@@ -161,6 +161,14 @@ class Card(TrelloBase):
         card.customFields = card.fetch_custom_fields(json_obj=json_obj)
         card._labels = Label.from_json_list(card.board, json_obj['labels'])
         card.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
+
+        card.creation_method = json_obj.get('creationMethod')
+        card.coordinates = json_obj.get('coordinates')
+        card.static_map_url = json_obj.get('staticMapUrl')
+        card.address = json_obj.get('address')
+        card.limits = json_obj.get('limits')
+        card.location_name = json_obj.get('locationName')
+
         if "attachments" in json_obj:
             card._attachments = []
             for attachment_json in json_obj["attachments"]:
@@ -203,6 +211,13 @@ class Card(TrelloBase):
         self.start = json_obj.get('start', '')
         self.checked = json_obj['checkItemStates']
         self.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
+
+        self.creation_method = json_obj.get('creationMethod')
+        self.coordinates = json_obj.get('coordinates')
+        self.static_map_url = json_obj.get('staticMapUrl')
+        self.address = json_obj.get('address')
+        self.limits = json_obj.get('limits')
+        self.location_name = json_obj.get('locationName')
 
         self._customFields = self.fetch_custom_fields(json_obj=json_obj)
         self._plugin_data = self.fetch_plugin_data() if eager else None

@@ -160,7 +160,17 @@ class TrelloClient(object):
 
         :rtype: Card
         """
-        card_json = self.fetch_json('/cards/' + card_id, query_params={'customFieldItems': 'true'})
+        # Specifying "fields: all" adds the following fields:
+        #   creationMethod
+        #   coordinates
+        #   staticMapUrl
+        #   address
+        #   limits
+        #   locationName
+        card_json = self.fetch_json('/cards/' + card_id, query_params={
+            'fields': 'all',
+            'customFieldItems': 'true'
+        })
         list_json = self.fetch_json('/lists/' + card_json['idList'])
         board = self.get_board(card_json['idBoard'])
         return Card.from_json(List.from_json(board, list_json), card_json)
