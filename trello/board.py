@@ -39,7 +39,7 @@ class Board(TrelloBase):
 		self.id = board_id
 		self.name = name
 		self._date_last_activity = None
-		self.customFieldDefinitions = None
+		self.uncacheCustomFieldDefinitions()
 
 	@classmethod
 	def from_json(cls, trello_client=None, organization=None, json_obj=None):
@@ -77,6 +77,9 @@ class Board(TrelloBase):
 		self.description = json_obj.get('desc', '')
 		self.closed = json_obj['closed']
 		self.url = json_obj['url']
+		self.uncacheCustomFieldDefinitions()
+
+	def uncacheCustomFieldDefinitions(self):
 		self.customFieldDefinitions = None
 
 	# Saves a Trello Board
@@ -198,7 +201,7 @@ class Board(TrelloBase):
 			'/customFields',
 			http_method='POST',
 			post_args=arguments)
-		self.customFieldDefinitions = None
+		self.uncacheCustomFieldDefinitions()
 		return CustomFieldDefinition.from_json(self, json_obj)
 
 	def get_labels(self, fields='all', limit=50):
