@@ -601,11 +601,12 @@ class Card(TrelloBase):
             http_method='PUT',
             post_args=post_args)
 
-    def set_custom_field_value(self, field_name, value):
+    def set_custom_field_value(self, field_id, value):
+        assert field_id
         fields = self.board.get_custom_field_definitions()
         field_def = None
         for f in fields:
-            if f.name.lower() == field_name.lower():
+            if f.id == field_id or f.name.lower() == field_id.lower():
                 field_def = f
                 break
 
