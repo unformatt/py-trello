@@ -32,7 +32,7 @@ class TrelloClient(object):
 
     _last_response = None
 
-    def __init__(self, api_key, api_secret=None, token=None, token_secret=None, http_service=requests, proxies={}):
+    def __init__(self, api_key, api_secret=None, token=None, token_secret=None, http_service=requests, proxies={}, client_id=None):
         """
         Constructor
 
@@ -57,6 +57,7 @@ class TrelloClient(object):
         self.resource_owner_key = token
         self.resource_owner_secret = token_secret
         self.http_service = http_service
+        self.client_id = client_id
 
     def info_for_all_boards(self, actions):
         """
@@ -223,6 +224,10 @@ class TrelloClient(object):
             headers['Content-Type'] = 'application/json; charset=utf-8'
 
         headers['Accept'] = 'application/json'
+
+        if self.client_id:
+            # https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/#x-trello-client-identifier-header-and-webhooks
+            headers['X-Trello-Client-Identifier'] = self.client_id
 
         # construct the full URL without query parameters
         if uri_path[0] == '/':
