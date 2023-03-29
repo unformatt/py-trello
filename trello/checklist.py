@@ -124,6 +124,20 @@ class Checklist(TrelloBase):
         self.items[ix] = json_obj
         return json_obj
 
+    def set_checklist_item_data(self, id, data):
+        json_obj = self.client.fetch_json(
+            '/cards/' + self.trello_card +
+            '/checklist/' + self.id +
+            '/checkItem/' + id,
+            http_method='PUT',
+            post_args=data)
+
+        for i in range(len(self.items)):
+            if self.items[i]['id'] == id:
+                self.items[i] = json_obj
+
+        return json_obj
+
     def delete(self):
         """Removes this checklist"""
         self.client.fetch_json(
