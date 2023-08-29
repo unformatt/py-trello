@@ -156,7 +156,7 @@ class TrelloClient(object):
         """
         return Member(self, member_id).fetch()
 
-    def get_card(self, card_id):
+    def get_card(self, card_id, params={}):
         """Get card
 
         :rtype: Card
@@ -168,11 +168,18 @@ class TrelloClient(object):
         #   address
         #   limits
         #   locationName
-        card_json = self.fetch_json('/cards/' + card_id, query_params={
+        query_params = {
             'fields': 'all',
-            'customFieldItems': 'true'
-        })
-        list_json = self.fetch_json('/lists/' + card_json['idList'])
+            'customFieldItems': 'true',
+            'list': 'true'
+        }
+        query_params.update(params)
+        card_json = self.fetch_json('/cards/' + card_id, query_params=query_params)
+
+        list_json = card_json.get(
+            'list',
+            self.fetch_json('/lists/' + card_json['idList'])
+        )
         board = self.get_board(card_json['idBoard'])
         return Card.from_json(List.from_json(board, list_json), card_json)
 
