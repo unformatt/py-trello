@@ -291,23 +291,41 @@ class Card(TrelloBase):
     def get_attachments(self):
         return [Attachments.from_json(attachments_json) for attachments_json in self.fetch_attachments(force=True)]
 
-    def fetch_actions(self, action_filter='createCard', since=None, before=None, action_limit=50):
+    def fetch_actions(self, action_filter='all', since=None, before=None, action_limit=50):
         """
         Fetch actions for this card can give more argv to action_filter,
         split for ',' json_obj is list
+        https://developer.atlassian.com/cloud/trello/rest/api-group-cards/#api-cards-id-actions-get
         """
-        query_params={'filter': action_filter, 'limit': action_limit}
-        if since:
-            query_params["since"] = since
+        page = 0
+        all_actions = []
+        while 1:
+            query_params = {
+                'filter': action_filter,
+                'limit': action_limit,
+                'page': page,
+            }
+            if since:
+                query_params["since"] = since
 
-        if before:
-            query_params["before"] = before
+            if before:
+                query_params["before"] = before
 
-        json_obj = self.client.fetch_json(
-            '/cards/' + self.id + '/actions',
-            query_params=query_params)
+            json_obj = self.client.fetch_json(
+                '/cards/' + self.id + '/actions',
+                query_params=query_params)
 
-        self.actions = json_obj
+            if not json_obj:
+                break
+
+            all_actions.extend(json_obj)
+            page += 1
+
+        def parse_date(action):
+            return dateparser.parse(action['date'])
+
+        all_actions = sorted(all_actions, key=parse_date)
+        self.actions = all_actions
         return self.actions
 
     def attriExp(self, multiple):
