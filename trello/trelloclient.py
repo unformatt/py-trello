@@ -222,8 +222,9 @@ class TrelloClient(object):
             post_args = {}
 
         # if files specified, we don't want any data
+        # Also, if post_args is empty, data should be None, not empty dict RE: https://developer.atlassian.com/changelog/#CHANGE-1459
         data = None
-        if files is None:
+        if files is None and post_args:
             data = json.dumps(post_args)
 
         # set content type and accept headers to handle JSON
@@ -255,6 +256,7 @@ class TrelloClient(object):
             url_no_params.endswith('/search')
 
         # print("---\n[Trello API Request]")
+        # print("http_method:", http_method)
         # print("url:", url)
         # print("query_params:", query_params)
         # print("headers:", headers)
