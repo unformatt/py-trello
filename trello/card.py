@@ -158,6 +158,7 @@ class Card(TrelloBase):
         card.idList = json_obj['idList']
         card.idShort = json_obj['idShort']
         card.badges = json_obj['badges']
+        card.idAttachmentCover = json_obj.get('idAttachmentCover') or ''
         card.customFields = card.fetch_custom_fields(json_obj=json_obj)
         card._labels = Label.from_json_list(card.board, json_obj['labels'])
         card.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
@@ -726,7 +727,7 @@ class Card(TrelloBase):
             '/cards/' + self.id + '/idMembers/' + member.id,
             http_method='DELETE')
 
-    def attach(self, name=None, mimeType=None, file=None, url=None):
+    def attach(self, name=None, mimeType=None, file=None, url=None, set_cover=False):
         """
         Add an attachment to the card. The attachment can be either a
         file or a url. Setting the name and/or mime type is optional.
@@ -745,6 +746,9 @@ class Card(TrelloBase):
             kwargs['name'] = name
             kwargs['mimeType'] = mimeType
             kwargs['url'] = url
+
+        if set_cover:
+            kwargs['setCover'] = 'true'
 
         return self._post_remote_data('attachments', **kwargs)
 
