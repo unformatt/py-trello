@@ -88,7 +88,7 @@ class List(TrelloBase):
             if limit and limit <= total:
                 break
 
-    def add_card(self, name, desc=None, labels=None, due="null", due_complete=False, start_date=None, source=None, position=None, assign=None, keep_from_source="all"):
+    def add_card(self, name, desc=None, labels=None, due="null", due_complete=False, start_date=None, source=None, position=None, assign=None, keep_from_source="all", **kwargs):
         """Add a card to this list
 
         :name: name for the card
@@ -121,6 +121,9 @@ class List(TrelloBase):
             'idCardSource': source,
             'keepFromSource': keep_from_source if source else None,
         }
+
+        post_args.update(kwargs)
+
         if position is not None:
             post_args["pos"] = position
 
