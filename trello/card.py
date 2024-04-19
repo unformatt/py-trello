@@ -836,6 +836,12 @@ class Card(TrelloBase):
             http_method='PUT',
             post_args={'value': value}, )
 
+    def _set_remote_attributes(self, values):
+        self.client.fetch_json(
+            '/cards/' + self.id ,
+            http_method='PUT',
+            post_args=values, )
+
     def _post_remote_data(self, attribute, files=None, **kwargs):
         return self.client.fetch_json(
             '/cards/' + self.id + '/' + attribute,
