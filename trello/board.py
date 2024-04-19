@@ -79,6 +79,10 @@ class Board(TrelloBase):
 		self.url = json_obj['url']
 		self.uncacheCustomFieldDefinitions()
 
+	def limits(self):
+		# https://developer.atlassian.com/cloud/trello/guides/rest-api/limits/#board-level-limits
+		return self.client.fetch_json('/boards/' + self.id + '/?fields=limits')
+
 	def uncacheCustomFieldDefinitions(self):
 		self.customFieldDefinitions = None
 
