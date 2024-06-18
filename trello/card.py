@@ -639,8 +639,9 @@ class Card(TrelloBase):
             else:
                 post_args = {'value': {prop: str(value)}}
         else:
-            list_field_id = [
-                i for i in field_def.list_options if i['value'] == value][0]['id']
+            list_field_id = None
+            if value is not None:
+                list_field_id = [i for i in field_def.list_options if i['value'] == value][0]['id']
             post_args = {'idValue': list_field_id}
 
         url = '/card/' + self.id + '/customField/' + field_def.id + '/item'
