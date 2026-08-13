@@ -25,6 +25,7 @@ class List(TrelloBase):
         self.closed = None
         self.pos = None
         self.subscribed = None
+        self.type = None
 
     @classmethod
     def from_json(cls, board, json_obj):
@@ -37,6 +38,7 @@ class List(TrelloBase):
         list = List(board, json_obj['id'], name=json_obj['name'])
         list.closed = json_obj['closed']
         list.pos = json_obj['pos']
+        list.type = json_obj.get('type')
 	#this method is also called from board.py with a different json object, so we need to make sure 'subscribed' is there
         if 'subscribed' in json_obj:
             list.subscribed = json_obj['subscribed']
@@ -51,6 +53,7 @@ class List(TrelloBase):
         self.name = json_obj['name']
         self.closed = json_obj['closed']
         self.pos = json_obj['pos']
+        self.type = json_obj.get('type')
         if 'subscribed' in json_obj:
             self.subscribed = json_obj['subscribed']
 
