@@ -136,6 +136,49 @@ class Card(TrelloBase):
         self.cardRole = None
         self.mirrorSourceId = None
 
+    def _populate_from_json(self, json_obj, fetched=False):
+        self.id = json_obj['id']
+        self.name = json_obj['name']
+        self.desc = json_obj.get('desc', '')
+        self.closed = json_obj['closed']
+        self.url = json_obj['url']
+        self.pos = json_obj['pos']
+        self.shortUrl = json_obj['shortUrl']
+        self.idMembers = json_obj['idMembers']
+        self.idLabels = json_obj['idLabels']
+        self.idBoard = json_obj['idBoard']
+        self.idList = json_obj['idList']
+        self.idShort = json_obj['idShort']
+        self.badges = json_obj['badges']
+        self._labels = Label.from_json_list(self.board, json_obj['labels'])
+        self.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
+
+        self.creation_method = json_obj.get('creationMethod')
+        self.coordinates = json_obj.get('coordinates')
+        self.static_map_url = json_obj.get('staticMapUrl')
+        self.address = json_obj.get('address')
+        self.limits = json_obj.get('limits')
+        self.location_name = json_obj.get('locationName')
+        self.cardRole = json_obj.get('cardRole')
+        self.mirrorSourceId = json_obj.get('mirrorSourceId')
+
+        if fetched:
+            if json_obj.get('due', ''):
+                self.due = json_obj.get('due', '')
+            else:
+                self.due = ''
+
+            self.checked = json_obj['checkItemStates']
+            self._customFields = self.fetch_custom_fields(json_obj=json_obj)
+        else:
+            self.due = json_obj.get('due', '')
+            self.is_due_complete = json_obj['dueComplete']
+            self.member_ids = json_obj['idMembers']
+            self.idAttachmentCover = json_obj.get('idAttachmentCover') or ''
+            self.customFields = self.fetch_custom_fields(json_obj=json_obj)
+
+        self.start = json_obj.get('start', '')
+
     @classmethod
     def from_json(cls, parent, json_obj):
         """
@@ -152,34 +195,7 @@ class Card(TrelloBase):
                    json_obj['id'],
                    name=json_obj['name'])
         card._json_obj = json_obj
-        card.desc = json_obj.get('desc', '')
-        card.due = json_obj.get('due', '')
-        card.start = json_obj.get('start', '')
-        card.is_due_complete = json_obj['dueComplete']
-        card.closed = json_obj['closed']
-        card.url = json_obj['url']
-        card.pos = json_obj['pos']
-        card.shortUrl = json_obj['shortUrl']
-        card.idMembers = json_obj['idMembers']
-        card.member_ids = json_obj['idMembers']
-        card.idLabels = json_obj['idLabels']
-        card.idBoard = json_obj['idBoard']
-        card.idList = json_obj['idList']
-        card.idShort = json_obj['idShort']
-        card.badges = json_obj['badges']
-        card.idAttachmentCover = json_obj.get('idAttachmentCover') or ''
-        card.customFields = card.fetch_custom_fields(json_obj=json_obj)
-        card._labels = Label.from_json_list(card.board, json_obj['labels'])
-        card.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
-
-        card.creation_method = json_obj.get('creationMethod')
-        card.coordinates = json_obj.get('coordinates')
-        card.static_map_url = json_obj.get('staticMapUrl')
-        card.address = json_obj.get('address')
-        card.limits = json_obj.get('limits')
-        card.location_name = json_obj.get('locationName')
-        card.cardRole = json_obj.get('cardRole')
-        card.mirrorSourceId = json_obj.get('mirrorSourceId')
+        card._populate_from_json(json_obj)
 
         if "attachments" in json_obj:
             card._attachments = []
@@ -201,39 +217,7 @@ class Card(TrelloBase):
         json_obj = self.client.fetch_json(
             '/cards/' + self.id,
             query_params={'badges': False, 'customFieldItems': 'true'})
-        self.id = json_obj['id']
-        self.name = json_obj['name']
-        self.desc = json_obj.get('desc', '')
-        self.closed = json_obj['closed']
-        self.url = json_obj['url']
-        self.shortUrl = json_obj['shortUrl']
-        self.idMembers = json_obj['idMembers']
-        self.idShort = json_obj['idShort']
-        self.idList = json_obj['idList']
-        self.idBoard = json_obj['idBoard']
-        self.idLabels = json_obj['idLabels']
-        self._labels = Label.from_json_list(self.board, json_obj['labels'])
-        self.badges = json_obj['badges']
-        self.pos = json_obj['pos']
-        if json_obj.get('due', ''):
-            self.due = json_obj.get('due', '')
-        else:
-            self.due = ''
-
-        self.start = json_obj.get('start', '')
-        self.checked = json_obj['checkItemStates']
-        self.dateLastActivity = dateparser.parse(json_obj['dateLastActivity'])
-
-        self.creation_method = json_obj.get('creationMethod')
-        self.coordinates = json_obj.get('coordinates')
-        self.static_map_url = json_obj.get('staticMapUrl')
-        self.address = json_obj.get('address')
-        self.limits = json_obj.get('limits')
-        self.location_name = json_obj.get('locationName')
-        self.cardRole = json_obj.get('cardRole')
-        self.mirrorSourceId = json_obj.get('mirrorSourceId')
-
-        self._customFields = self.fetch_custom_fields(json_obj=json_obj)
+        self._populate_from_json(json_obj, fetched=True)
         self._plugin_data = self.fetch_plugin_data() if eager else None
         self._checklists = self.fetch_checklists() if eager else None
         self._comments = self.fetch_comments() if eager else None
