@@ -40,6 +40,7 @@ class TrelloListTestCase(unittest.TestCase):
             'labels': [],
             'dateLastActivity': '2026-08-17T00:00:00.000Z',
             'customFieldItems': [],
+            'cardRole': 'mirror',
             'mirrorSourceId': 'source-card-1',
         }
 
@@ -53,6 +54,8 @@ class TrelloListTestCase(unittest.TestCase):
         cards = trello_list.list_cards()
 
         self.assertEqual(cards[0].mirrorSourceId, 'source-card-1')
+        self.assertEqual(cards[0].cardRole, 'mirror')
+        self.assertTrue(cards[0].is_mirrored_clone)
 
 
 if __name__ == "__main__":

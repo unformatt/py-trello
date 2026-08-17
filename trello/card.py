@@ -103,6 +103,13 @@ class Card(TrelloBase):
             self._attachments = self.fetch_attachments()
         return self._attachments
 
+    @property
+    def is_mirrored_clone(self):
+        """
+        This is the copy of a mirrored card using the Trello built-in Mirror feature
+        """
+        return self.cardRole == 'mirror'
+
     def __init__(self, parent, card_id, name=''):
         """
         :parent: reference to the parent trello list
@@ -126,6 +133,7 @@ class Card(TrelloBase):
         self._attachments = None
         self._labels = None
         self._json_obj = None
+        self.cardRole = None
         self.mirrorSourceId = None
 
     @classmethod
@@ -170,6 +178,7 @@ class Card(TrelloBase):
         card.address = json_obj.get('address')
         card.limits = json_obj.get('limits')
         card.location_name = json_obj.get('locationName')
+        card.cardRole = json_obj.get('cardRole')
         card.mirrorSourceId = json_obj.get('mirrorSourceId')
 
         if "attachments" in json_obj:
@@ -221,6 +230,7 @@ class Card(TrelloBase):
         self.address = json_obj.get('address')
         self.limits = json_obj.get('limits')
         self.location_name = json_obj.get('locationName')
+        self.cardRole = json_obj.get('cardRole')
         self.mirrorSourceId = json_obj.get('mirrorSourceId')
 
         self._customFields = self.fetch_custom_fields(json_obj=json_obj)
