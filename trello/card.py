@@ -126,6 +126,7 @@ class Card(TrelloBase):
         self._attachments = None
         self._labels = None
         self._json_obj = None
+        self.mirrorSourceId = None
 
     @classmethod
     def from_json(cls, parent, json_obj):
@@ -169,6 +170,7 @@ class Card(TrelloBase):
         card.address = json_obj.get('address')
         card.limits = json_obj.get('limits')
         card.location_name = json_obj.get('locationName')
+        card.mirrorSourceId = json_obj.get('mirrorSourceId')
 
         if "attachments" in json_obj:
             card._attachments = []
@@ -219,6 +221,7 @@ class Card(TrelloBase):
         self.address = json_obj.get('address')
         self.limits = json_obj.get('limits')
         self.location_name = json_obj.get('locationName')
+        self.mirrorSourceId = json_obj.get('mirrorSourceId')
 
         self._customFields = self.fetch_custom_fields(json_obj=json_obj)
         self._plugin_data = self.fetch_plugin_data() if eager else None
